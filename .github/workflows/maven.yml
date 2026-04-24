@@ -33,6 +33,16 @@ jobs:
         run: |
           sudo apt-get install -y firefox
 
+      - name: Create config.properties from secrets
+        run: |
+          mkdir -p src/test/resources
+          echo "browser=chrome" > src/test/resources/config.properties
+          echo "baseUrl=https://www.n11.com" >> src/test/resources/config.properties
+          echo "implicitWait=10" >> src/test/resources/config.properties
+          echo "explicitWait=15" >> src/test/resources/config.properties
+          echo "n11.email=${{ secrets.N11_EMAIL }}" >> src/test/resources/config.properties
+          echo "n11.password=${{ secrets.N11_PASSWORD }}" >> src/test/resources/config.properties
+
       - name: Build project
         run: mvn clean compile -q
 
