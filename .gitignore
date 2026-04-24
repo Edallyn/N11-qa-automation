@@ -1,0 +1,24 @@
+# Compiled class files
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper
+.mvn/
+
+# Test reports (regenerated on each run)
+target/cucumber-reports/
+target/screenshots/
+target/smoke-report/
+target/regression-report/
+
+# Sensitive config — use GitHub Secrets or local overrides
+src/test/resources/config.properties
