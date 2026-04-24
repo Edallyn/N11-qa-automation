@@ -27,7 +27,9 @@ public class DriverManager {
     // Sets up WebDriverManager, builds browser options, and stores the driver in ThreadLocal
     private static void initDriver() {
         String browser = ConfigReader.getProperty("browser").toLowerCase();
-        boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+        boolean headless =
+                Boolean.parseBoolean(System.getProperty("headless", "false"))
+                        || "true".equalsIgnoreCase(System.getenv("CI"));
         long implicitWait = Long.parseLong(ConfigReader.getProperty("implicitWait"));
 
         WebDriver driver;
