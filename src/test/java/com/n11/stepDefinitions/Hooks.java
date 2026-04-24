@@ -40,17 +40,35 @@ public class Hooks {
             WebDriver driver = DriverManager.getDriver();
             JavascriptExecutor js = (JavascriptExecutor) driver;
 
-            // JavaScript ile direkt tıkla
-            Object result = js.executeScript(
-                    "var el = document.getElementById('2a7d83f8-effc-496f-ab9f-ed6840f0a847');" +
-                            "if(el) { el.click(); return 'clicked'; } else { return 'not found'; }"
-            );
+            // Try multiple common selectors for N11 cookie/consent buttons
+            String script = 
+                "var selectors = [" +
+                "  'div[data-name=\"Accept Button\"]', " +
+                "  'div[data-name=\"Reject Button\"]', " +
+                "  'button[id=\"sp-cc-accept\"]', " +
+                "  '#ez-accept-all', " +
+                "  '.accept-all', " +
+                "  '#2a7d83f8-effc-496f-ab9f-ed6840f0a847'" + // Keep the old ID just in case
+                "];" +
+                "var clicked = false;" +
+                "for (var i = 0; i < selectors.length; i++) {" +
+                "  var el = document.querySelector(selectors[i]);" +
+                "  if (el && typeof el.click === 'function') {" +
+                "    el.click();" +
+                "    clicked = true;" +
+                "    break;" +
+                "  }" +
+                "}" +
+                // Also force hide any potential overlay containers
+                "var overlays = document.querySelectorAll('[id*=\"sp-cc\"], [class*=\"cookie\"], [class*=\"consent\"], [id*=\"efilli\"]');" +
+                "overlays.forEach(function(o) { o.style.display = 'none'; });" +
+                "return clicked ? 'clicked' : 'not found or hidden';";
 
-            System.out.println("Cookie popup sonucu: " + result);
-            try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
-
+            Object result = js.executeScript(script);
+            System.out.println("Cookie popup check: " + result);
+            
         } catch (Exception e) {
-            System.out.println("Cookie popup hatası: " + e.getMessage());
+            System.out.println("Cookie popup handling skip: " + e.getMessage());
         }
     }
 

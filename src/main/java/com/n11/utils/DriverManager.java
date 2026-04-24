@@ -26,11 +26,14 @@ public class DriverManager {
 
     // Sets up WebDriverManager, builds browser options, and stores the driver in ThreadLocal
     private static void initDriver() {
-        String browser = ConfigReader.getProperty("browser").toLowerCase();
+        // ConfigReader sınıfını doğrudan paketiyle çağırarak IntelliJ'in bulmasını kesinleştiriyoruz
+        String browser = com.n11.utils.ConfigReader.getProperty("browser").toLowerCase();
+        
         boolean headless =
                 Boolean.parseBoolean(System.getProperty("headless", "false"))
                         || "true".equalsIgnoreCase(System.getenv("CI"));
-        long implicitWait = Long.parseLong(ConfigReader.getProperty("implicitWait"));
+        
+        long implicitWait = Long.parseLong(com.n11.utils.ConfigReader.getProperty("implicitWait"));
 
         WebDriver driver;
 
@@ -54,8 +57,6 @@ public class DriverManager {
 
     // Creates and returns a ChromeDriver with appropriate options
     private static WebDriver createChromeDriver(boolean headless) {
-        // WebDriverManager.chromedriver().setup();
-
         ChromeOptions options = new ChromeOptions();
 
         if (headless) {
@@ -73,9 +74,10 @@ public class DriverManager {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-first-run");
         options.addArguments("--disable-features=ChromeWhatsNewUI");
+        options.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
 
-        // Çerez tercihlerini otomatik kabul et — popup çıkmasın
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("profile.default_content_setting_values.cookies", 1);
         prefs.put("profile.cookie_controls_mode", 0);
@@ -86,8 +88,6 @@ public class DriverManager {
 
     // Creates and returns a FirefoxDriver with appropriate options
     private static WebDriver createFirefoxDriver(boolean headless) {
-        // WebDriverManager.firefoxdriver().setup();
-
         FirefoxOptions options = new FirefoxOptions();
 
         if (headless) {
@@ -105,8 +105,6 @@ public class DriverManager {
 
     // Creates and returns an EdgeDriver with appropriate options
     private static WebDriver createEdgeDriver(boolean headless) {
-        // WebDriverManager.edgedriver().setup();
-
         org.openqa.selenium.edge.EdgeOptions options = new org.openqa.selenium.edge.EdgeOptions();
 
         if (headless) {
